@@ -1,0 +1,23 @@
+{
+  "name": "node-agent-skills",
+  "version": "0.1.0",
+  "description": "A curated collection of native Node.js/TypeScript skills for AI agents.",
+  "type": "module",
+  "private": true,
+  "workspaces": [
+    "skills/*"
+  ],
+  "scripts": {
+    "test": "node --test skills/**/*.test.js"
+  },
+  "keywords": [
+    "agent-skills",
+    "ai-agents",
+    "claude-code",
+    "cursor",
+    "windsurf",
+    "nodejs",
+    "typescript"
+  ],
+  "license": "MIT"
+}
