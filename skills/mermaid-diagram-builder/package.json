@@ -1,0 +1,26 @@
+{
+  "name": "@unreadloags/skill-mermaid-diagram-builder",
+  "version": "1.0.0",
+  "description": "Native Node.js Mermaid diagram skill for AI agents: syntax validation, rendering to SVG/PNG/JPG/PDF, graph analysis, markdown extraction, and repair.",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "skill-mermaid": "scripts/index.js"
+  },
+  "files": [
+    "scripts",
+    "assets",
+    "SKILL.md"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.66",
+    "@resvg/resvg-js": "^2.6.2",
+    "jsdom": "^25.0.1",
+    "mermaid": "^11.4.1",
+    "pdf-lib": "^1.17.1"
+  },
+  "license": "MIT"
+}

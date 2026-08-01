@@ -1,0 +1,23 @@
+{
+  "name": "@unreadloags/skill-pdf",
+  "version": "1.0.0",
+  "description": "Native Node.js PDF skill for AI agents: text/field/structure extraction, form filling, rendering, merging, splitting and more.",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "skill-pdf": "scripts/index.js"
+  },
+  "files": [
+    "scripts",
+    "SKILL.md"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.66",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^4.10.38"
+  },
+  "license": "MIT"
+}
