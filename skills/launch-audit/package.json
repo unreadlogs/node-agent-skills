@@ -1,0 +1,11 @@
+{
+  "name": "@unreadlogs/skill-launch-audit",
+  "version": "1.0.0",
+  "description": "Guidance skill for AI agents: pre-launch and pre-commit readiness reviews with evidence and severity.",
+  "type": "module",
+  "private": true,
+  "files": [
+    "SKILL.md"
+  ],
+  "license": "MIT"
+}

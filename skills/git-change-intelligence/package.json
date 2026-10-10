@@ -1,0 +1,13 @@
+{
+  "name": "@unreadlogs/skill-git-change-intelligence",
+  "version": "0.1.0",
+  "description": "Structured read-only Git status, history, and diff summaries.",
+  "type": "module",
+  "private": true,
+  "bin": {"skill-git": "scripts/index.js"},
+  "files": ["scripts", "SKILL.md"],
+  "scripts": {"test": "node --test"},
+  "engines": {"node": ">=20"},
+  "dependencies": {"isomorphic-git": "^1.25.10"},
+  "license": "MIT"
+}

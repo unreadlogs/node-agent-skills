@@ -1,0 +1,12 @@
+{
+  "name": "@unreadlogs/skill-secret-and-config-audit",
+  "version": "0.1.0",
+  "description": "Redacted heuristic secret and risky configuration scanner.",
+  "type": "module",
+  "private": true,
+  "bin": {"skill-secrets": "scripts/index.js"},
+  "files": ["scripts", "SKILL.md"],
+  "scripts": {"test": "node --test"},
+  "engines": {"node": ">=20"},
+  "license": "MIT"
+}

@@ -1,5 +1,9 @@
 # Node Agent Skills
 
+[![CI](https://github.com/unreadlogs/node-agent-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/unreadlogs/node-agent-skills/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Node](https://img.shields.io/badge/node-%3E%3D20-5FA04E.svg)](https://nodejs.org)
+
 **Small, dependable tools for AI agents running in JavaScript environments.**
 
 Most agent workflows are written in JavaScript or TypeScript, but many useful tools still assume Python, a system binary, Docker, or a long setup guide. This project takes a simpler approach: package the useful parts as focused Node.js skills with predictable inputs, safe defaults, and machine-readable results.
@@ -26,7 +30,34 @@ The repository contains two kinds of skills:
 - **Tool skills** are executable Node.js CLIs. They accept explicit arguments and return structured JSON, so an agent can call them without scraping human-oriented terminal output.
 - **Guidance skills** are focused playbooks for agents. They explain how to approach a task, what to check, and what not to claim.
 
-The current collection is intentionally small. 
+### Tool skills
+
+- [`pdf`](skills/pdf/SKILL.md) — read, search, split, merge, stamp, render, and fill digital PDFs and forms.
+- [`image-transform-pipeline`](skills/image-transform-pipeline/SKILL.md) — inspect, resize, and convert images locally with `sharp`.
+- [`ocr-to-markdown`](skills/ocr-to-markdown/SKILL.md) — pull printed text out of images, with confidence and word coordinates as evidence.
+- [`streaming-csv-json-normalizer`](skills/streaming-csv-json-normalizer/SKILL.md) — parse, normalize, and export CSV data without loading a whole file into memory.
+- [`workspace-archives`](skills/workspace-archives/SKILL.md) — build allowlisted ZIP handoff archives with manifests and path containment.
+- [`ast-aware-js-repo-audit`](skills/ast-aware-js-repo-audit/SKILL.md) — run ESLint through its Node API and return normalized, location-rich findings.
+- [`json-repair-and-schema`](skills/json-repair-and-schema/SKILL.md) — validate, conservatively repair, and schema-check JSON and JSONL with explicit diagnostics.
+- [`git-change-intelligence`](skills/git-change-intelligence/SKILL.md) — structured read-only Git status, history, and diff summaries without shelling out.
+- [`env-doctor`](skills/env-doctor/SKILL.md) — diagnose runtime, package manager, scripts, and environment problems without exposing secret values.
+- [`secret-and-config-audit`](skills/secret-and-config-audit/SKILL.md) — scan for likely secrets and risky configuration, with every value redacted.
+- [`sqlite-agent-toolkit`](skills/sqlite-agent-toolkit/SKILL.md) — inspect SQLite schemas and run bounded read-only queries.
+
+Every tool skill follows the same small contract: success prints one JSON object to `stdout`, failures print one JSON object to `stderr` and exit with code `1`. That makes them equally usable from an agent, a shell script, or a CI job.
+
+```json
+{"data":{"page_count":4,"metadata":{}}}
+```
+
+Commands are explicit rather than magical. Inputs, output paths, page ranges, and mutations stay visible in the call.
+
+### Guidance skills
+
+- [`launch-audit`](skills/launch-audit/SKILL.md) — a practical pre-launch and pre-commit review for fast-moving projects.
+- [`frontend-ui`](skills/frontend-ui/SKILL.md) — guidance for making interfaces feel intentional rather than generic.
+
+Every tool skill folder holds everything it needs: a `SKILL.md`, its implementation under `scripts/`, its own `package.json`, and tests under `test/`. Guidance skills ship as a `SKILL.md` and a `package.json`.
 
 ## Quick start
 
@@ -35,7 +66,7 @@ Requirements: **Node.js 20 or newer**.
 ```bash
 git clone https://github.com/unreadlogs/node-agent-skills.git
 cd node-agent-skills
-npm ci
+npm install
 npm test
 ```
 
@@ -69,7 +100,7 @@ skills/<skill-name>/
 Run everything from the repository root:
 
 ```bash
-npm ci
+npm install
 npm test
 ```
 
@@ -98,25 +129,18 @@ When adding a tool skill:
 
 ## Status
 
-This is an early, actively shaped project. The PDF tool is the most mature part of the collection. The roadmap is intentionally opinionated: some tempting areas—generic browser automation and general audio/video conversion—are excluded because existing Node ecosystems already cover them well or because the current runtime options are not dependable enough.
+This is an early, actively shaped project, and every skill here is a first release that will keep tightening. The PDF tool is the most mature part of the collection. The scope is intentionally opinionated: some tempting areas—generic browser automation and general audio/video conversion—are excluded because existing Node ecosystems already cover them well or because the current runtime options are not dependable enough.
 
 Expect the interfaces to improve as more skills are added. Pin the repository revision if you need reproducible behavior.
 
 ## Contributing
 
-A good contribution starts with a recurring agent problem that is awkward in a JavaScript-only environment.
+Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide, including what a good skill looks like, how to structure a pull request, and how to run the tests.
 
-Please include:
+In short: start with a recurring agent problem that is awkward in a JavaScript-only environment, keep the skill narrow, put explicit limits around untrusted input, and return evidence rather than a success message. Small, focused pull requests are easier to review than a new mega-skill.
 
-- the user problem and a small example;
-- the Node libraries you are building on and why they are a good fit;
-- the limits and failure modes;
-- tests that exercise real input and invalid input;
-- documentation that shows the output an agent receives.
-
-Small, focused pull requests are easier to review than a new mega-skill.
+Security reports do not belong in public issues — see [SECURITY.md](SECURITY.md).
 
 ## License
 
-MIT. Third-party assets and dependencies keep their own licenses
-
+MIT — see [LICENSE](LICENSE). Third-party assets and dependencies keep their own licenses; see the relevant skill directory for additional notices.

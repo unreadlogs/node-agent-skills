@@ -1,0 +1,13 @@
+{
+  "name": "@unreadlogs/skill-workspace-archives",
+  "version": "0.1.0",
+  "description": "Bounded ZIP workspace archives for AI agent handoff.",
+  "type": "module",
+  "private": true,
+  "bin": {"skill-archive": "scripts/index.js"},
+  "files": ["scripts", "SKILL.md"],
+  "scripts": {"test": "node --test"},
+  "engines": {"node": ">=20"},
+  "dependencies": {"archiver": "^7.0.1"},
+  "license": "MIT"
+}

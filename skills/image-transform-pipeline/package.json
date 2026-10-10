@@ -1,0 +1,13 @@
+{
+  "name": "@unreadlogs/skill-image-transform-pipeline",
+  "version": "0.1.0",
+  "description": "Deterministic image inspection, resizing, and format conversion for AI agents.",
+  "type": "module",
+  "private": true,
+  "bin": {"skill-image": "scripts/index.js"},
+  "files": ["scripts", "SKILL.md"],
+  "scripts": {"test": "node --test"},
+  "engines": {"node": ">=20"},
+  "dependencies": {"sharp": "^0.33.5"},
+  "license": "MIT"
+}

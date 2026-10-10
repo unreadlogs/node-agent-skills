@@ -1,0 +1,13 @@
+{
+  "name": "@unreadlogs/skill-ocr-to-markdown",
+  "version": "0.1.0",
+  "description": "Bounded printed-text OCR to Markdown for AI agents.",
+  "type": "module",
+  "private": true,
+  "bin": {"skill-ocr": "scripts/index.js"},
+  "files": ["scripts", "SKILL.md"],
+  "scripts": {"test": "node --test"},
+  "engines": {"node": ">=20"},
+  "dependencies": {"tesseract.js": "^6.0.1"},
+  "license": "MIT"
+}

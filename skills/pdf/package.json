@@ -1,5 +1,5 @@
 {
-  "name": "@unreadloags/skill-pdf",
+  "name": "@unreadlogs/skill-pdf",
   "version": "1.0.0",
   "description": "Native Node.js PDF skill for AI agents: text/field/structure extraction, form filling, rendering, merging, splitting and more.",
   "type": "module",

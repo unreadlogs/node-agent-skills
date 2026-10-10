@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Node ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['20', '22']
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+  docs:
+    name: Repository checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Every skill is documented in the README
+        run: |
+          status=0
+          for dir in skills/*/; do
+            name=$(basename "$dir")
+            if ! grep -q "skills/$name/SKILL.md" README.md; then
+              echo "::error file=README.md::skills/$name is not listed in the README"
+              status=1
+            fi
+          done
+          exit $status
+
+      - name: Every skill has a package.json and a SKILL.md
+        run: |
+          status=0
+          for dir in skills/*/; do
+            name=$(basename "$dir")
+            for file in SKILL.md package.json; do
+              if [ ! -f "$dir$file" ]; then
+                echo "::error file=$dir::missing $file"
+                status=1
+              fi
+            done
+            node -e "JSON.parse(require('fs').readFileSync('$dir/package.json','utf8'))" \
+              || { echo "::error file=$dir/package.json::invalid JSON"; status=1; }
+          done
+          exit $status
+
+      - name: No stray lockfile
+        run: |
+          if [ -f package-lock.json ]; then
+            echo "::error file=package-lock.json::this repository does not track a lockfile"
+            exit 1
+          fi

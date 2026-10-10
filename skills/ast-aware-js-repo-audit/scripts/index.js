@@ -1,0 +1,7 @@
+#!/usr/bin/env node
+import { ESLint } from 'eslint';
+
+function fail(message) { process.stderr.write(JSON.stringify({ error: message }) + '\n'); process.exitCode = 1; }
+function parseArgs(values) { const positional = []; const flags = {}; for (let i = 0; i < values.length; i += 1) { if (!values[i].startsWith('--')) positional.push(values[i]); else if (values[i + 1] && !values[i + 1].startsWith('--')) flags[values[i].slice(2)] = values[++i]; else flags[values[i].slice(2)] = true; } return { positional, flags }; }
+async function main() { const [command, ...rest] = process.argv.slice(2); const { positional, flags } = parseArgs(rest); if (command !== 'lint' || positional.length === 0) throw new Error('usage: index.js lint <file-or-directory> [--format json]'); const eslint = new ESLint({ cwd: process.cwd(), overrideConfigFile: flags.config || true }); const results = await eslint.lintFiles(positional); const findings = results.flatMap((result) => result.messages.map((message) => ({ file: result.filePath, line: message.line, column: message.column, endLine: message.endLine ?? null, endColumn: message.endColumn ?? null, severity: message.severity, ruleId: message.ruleId, message: message.message }))); const data = { targets: positional, files: results.length, errorCount: findings.filter((f) => f.severity === 2).length, warningCount: findings.filter((f) => f.severity === 1).length, findings }; process.stdout.write(JSON.stringify({ data }, null, flags.format === 'json' ? 2 : 0) + '\n'); }
+main().catch((error) => fail(error.message));

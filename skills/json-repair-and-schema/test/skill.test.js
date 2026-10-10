@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import { spawnSync } from 'node:child_process';
+import test from 'node:test';
+const cli = path.resolve(import.meta.dirname, '..', 'scripts', 'index.js'); const run = (args) => spawnSync(process.execPath, [cli, ...args], { encoding: 'utf8' });
+test('repairs common JSON mistakes', async () => { const dir = await mkdtemp(path.join(os.tmpdir(), 'skill-json-')); try { const input = path.join(dir, 'bad.json'); const output = path.join(dir, 'good.json'); await writeFile(input, "{name: 'Ada', age: 36,}"); const result = run(['repair', input, output]); assert.equal(result.status, 0, result.stderr); assert.deepEqual(JSON.parse(await readFile(output, 'utf8')), { name: 'Ada', age: 36 }); } finally { await rm(dir, { recursive: true, force: true }); } });
+test('validates data against a schema', async () => { const dir = await mkdtemp(path.join(os.tmpdir(), 'skill-json-')); try { const data = path.join(dir, 'data.json'); const schema = path.join(dir, 'schema.json'); await writeFile(data, '{"name":"Ada"}'); await writeFile(schema, '{"type":"object","required":["name"]}'); const result = run(['validate', data, schema]); assert.equal(result.status, 0); assert.equal(JSON.parse(result.stdout).data.valid, true); } finally { await rm(dir, { recursive: true, force: true }); } });
+test('bad command returns structured error', () => { const result = run(['wat']); assert.equal(result.status, 1); assert.match(JSON.parse(result.stderr).error, /usage/); });

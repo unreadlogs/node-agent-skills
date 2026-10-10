@@ -1,0 +1,13 @@
+{
+  "name": "@unreadlogs/skill-env-doctor",
+  "version": "0.1.0",
+  "description": "Node project runtime and environment diagnostics for AI agents.",
+  "type": "module",
+  "private": true,
+  "bin": {"skill-env": "scripts/index.js"},
+  "files": ["scripts", "SKILL.md"],
+  "scripts": {"test": "node --test"},
+  "engines": {"node": ">=20"},
+  "dependencies": {"semver": "^7.6.3"},
+  "license": "MIT"
+}

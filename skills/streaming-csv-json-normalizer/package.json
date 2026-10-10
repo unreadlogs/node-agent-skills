@@ -1,0 +1,13 @@
+{
+  "name": "@unreadlogs/skill-streaming-csv-json-normalizer",
+  "version": "0.1.0",
+  "description": "Bounded CSV inspection, parsing, normalization, and export for AI agents.",
+  "type": "module",
+  "private": true,
+  "bin": {"skill-csv": "scripts/index.js"},
+  "files": ["scripts", "SKILL.md"],
+  "scripts": {"test": "node --test"},
+  "engines": {"node": ">=20"},
+  "dependencies": {"csv-parse": "^5.5.6", "csv-stringify": "^6.5.1"},
+  "license": "MIT"
+}

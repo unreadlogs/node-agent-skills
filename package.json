@@ -10,6 +10,9 @@
   "scripts": {
     "test": "node --test skills/**/*.test.js"
   },
+  "engines": {
+    "node": ">=20"
+  },
   "keywords": [
     "agent-skills",
     "ai-agents",

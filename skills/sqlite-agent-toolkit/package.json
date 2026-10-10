@@ -1,0 +1,13 @@
+{
+  "name": "@unreadlogs/skill-sqlite-agent-toolkit",
+  "version": "0.1.0",
+  "description": "Bounded read-only SQLite schema and query tools for AI agents.",
+  "type": "module",
+  "private": true,
+  "bin": {"skill-sqlite": "scripts/index.js"},
+  "files": ["scripts", "SKILL.md"],
+  "scripts": {"test": "node --test"},
+  "engines": {"node": ">=20"},
+  "dependencies": {"better-sqlite3": "^11.7.0"},
+  "license": "MIT"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "@unreadlogs/skill-ast-aware-js-repo-audit",
+  "version": "0.1.0",
+  "description": "Normalized programmatic ESLint findings for JavaScript repositories.",
+  "type": "module",
+  "private": true,
+  "bin": {"skill-audit": "scripts/index.js"},
+  "files": ["scripts", "SKILL.md"],
+  "scripts": {"test": "node --test"},
+  "engines": {"node": ">=20"},
+  "dependencies": {"eslint": "^9.17.0"},
+  "license": "MIT"
+}
