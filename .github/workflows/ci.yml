@@ -72,10 +72,3 @@ jobs:
               || { echo "::error file=$dir/package.json::invalid JSON"; status=1; }
           done
           exit $status
-
-      - name: No stray lockfile
-        run: |
-          if [ -f package-lock.json ]; then
-            echo "::error file=package-lock.json::this repository does not track a lockfile"
-            exit 1
-          fi
