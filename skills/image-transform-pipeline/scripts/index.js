@@ -33,9 +33,15 @@ function parseArgs(values) {
 }
 
 function positiveNumber(value, label) {
+  if (typeof value !== 'string' || value.trim() === '') throw new Error(`${label} must be a positive number`);
   const number = Number(value);
   if (!Number.isFinite(number) || number <= 0) throw new Error(`${label} must be a positive number`);
   return number;
+}
+
+function assertFlags(flags, allowed) {
+  const unknown = Object.keys(flags).filter((flag) => !allowed.includes(flag));
+  if (unknown.length) throw new Error(`unknown option: --${unknown[0]}`);
 }
 
 async function checkInput(input) {
@@ -75,7 +81,11 @@ function outputFormat(output) {
 function applyFormat(pipeline, format, quality) {
   const normalized = format === 'jpg' ? 'jpeg' : format;
   if (!['jpeg', 'png', 'webp', 'avif'].includes(normalized)) throw new Error(`unsupported format: ${format}`);
-  const boundedQuality = quality === undefined ? undefined : Math.max(1, Math.min(100, positiveNumber(quality, 'quality')));
+  const boundedQuality = quality === undefined ? undefined : positiveNumber(quality, 'quality');
+  if (boundedQuality !== undefined && (!Number.isInteger(boundedQuality) || boundedQuality > 100)) {
+    throw new Error('quality must be an integer from 1 to 100');
+  }
+  if (boundedQuality !== undefined && normalized === 'png') throw new Error('--quality is only supported for jpeg, webp, or avif output');
   if (normalized === 'jpeg') pipeline.jpeg(boundedQuality ? { quality: boundedQuality } : {});
   if (normalized === 'png') pipeline.png();
   if (normalized === 'webp') pipeline.webp(boundedQuality ? { quality: boundedQuality } : {});
@@ -86,17 +96,32 @@ function applyFormat(pipeline, format, quality) {
 async function transform(input, output, flags, command) {
   await checkInput(input);
   if (path.resolve(input) === path.resolve(output)) throw new Error('output must be different from input');
-  const width = flags.width ? Math.round(positiveNumber(flags.width, 'width')) : undefined;
-  const height = flags.height ? Math.round(positiveNumber(flags.height, 'height')) : undefined;
+  const dimension = (value, label) => {
+    if (value === undefined) return undefined;
+    const number = positiveNumber(value, label);
+    if (!Number.isInteger(number)) throw new Error(`${label} must be a positive integer`);
+    return number;
+  };
+  const width = dimension(flags.width, '--width');
+  const height = dimension(flags.height, '--height');
   if (command === 'resize' && !width && !height) throw new Error('resize requires --width or --height');
   if (command === 'convert' && !flags.format) throw new Error('convert requires --format');
   const pipeline = sharp(input, { limitInputPixels: MAX_PIXELS }).rotate();
   if (command === 'resize') {
     const fit = flags.fit ?? 'contain';
     if (!['contain', 'cover', 'fill', 'inside', 'outside'].includes(fit)) throw new Error(`unsupported fit: ${fit}`);
+    const enlargement = flags['without-enlargement'];
+    if (enlargement !== undefined && ![true, 'true', 'false'].includes(enlargement)) {
+      throw new Error('--without-enlargement accepts only true or false');
+    }
     pipeline.resize({ width, height, fit, withoutEnlargement: flags['without-enlargement'] !== 'false' });
   }
-  const format = applyFormat(pipeline, command === 'convert' ? String(flags.format).toLowerCase() : outputFormat(output), flags.quality);
+  const outputType = command === 'convert' ? String(flags.format).toLowerCase() : outputFormat(output);
+  const format = applyFormat(pipeline, outputType, flags.quality);
+  if (command === 'convert') {
+    const extensionFormat = outputFormat(output);
+    if (extensionFormat !== format) throw new Error(`output extension does not match --format ${format}`);
+  }
   const result = await pipeline.toFile(output);
   return { input, output, format, width: result.width, height: result.height, size: result.size };
 }
@@ -107,9 +132,13 @@ async function main() {
   if (!command || command === '--help') throw new Error('usage: index.js <info|resize|convert> ...');
   let data;
   if (command === 'info') {
+    assertFlags(flags, []);
     if (positional.length !== 1) throw new Error('info requires <input>');
     data = await inspect(positional[0]);
   } else if (command === 'resize' || command === 'convert') {
+    assertFlags(flags, command === 'resize'
+      ? ['width', 'height', 'fit', 'quality', 'without-enlargement']
+      : ['format', 'quality']);
     if (positional.length !== 2) throw new Error(`${command} requires <input> <output>`);
     data = await transform(positional[0], positional[1], flags, command);
   } else {

@@ -23,12 +23,15 @@ function parseArgs(values) {
 async function main() {
   const [command, ...rest] = process.argv.slice(2);
   const { positional, flags } = parseArgs(rest);
-  if (command !== 'ocr' || positional.length !== 1) throw new Error('usage: index.js ocr <image> [--language eng]');
+  if (command !== 'ocr' || positional.length !== 1 || Object.keys(flags).some((key) => key !== 'language')) {
+    throw new Error('usage: index.js ocr <image> [--language eng]');
+  }
   const input = positional[0];
   const stat = await fs.stat(input);
   if (!stat.isFile()) throw new Error(`input is not a file: ${input}`);
   if (stat.size > MAX_BYTES) throw new Error(`input exceeds ${MAX_BYTES} byte limit`);
   const language = String(flags.language ?? 'eng');
+  if (!/^[A-Za-z0-9_+-]+$/.test(language)) throw new Error('language must contain only Tesseract language codes separated by +');
   const worker = await tesseract.createWorker(language);
   try {
     const result = await worker.recognize(input);

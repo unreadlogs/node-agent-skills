@@ -36,7 +36,7 @@ The repository contains two kinds of skills:
 - [`image-transform-pipeline`](skills/image-transform-pipeline/SKILL.md) — inspect, resize, and convert images locally with `sharp`.
 - [`ocr-to-markdown`](skills/ocr-to-markdown/SKILL.md) — pull printed text out of images, with confidence and word coordinates as evidence.
 - [`streaming-csv-json-normalizer`](skills/streaming-csv-json-normalizer/SKILL.md) — parse, normalize, and export CSV data without loading a whole file into memory.
-- [`workspace-archives`](skills/workspace-archives/SKILL.md) — build allowlisted ZIP handoff archives with manifests and path containment.
+- [`workspace-archives`](skills/workspace-archives/SKILL.md) — build ZIP handoff archives from explicit file lists and inspect their entry names.
 - [`ast-aware-js-repo-audit`](skills/ast-aware-js-repo-audit/SKILL.md) — run ESLint through its Node API and return normalized, location-rich findings.
 - [`json-repair-and-schema`](skills/json-repair-and-schema/SKILL.md) — validate, conservatively repair, and schema-check JSON and JSONL with explicit diagnostics.
 - [`git-change-intelligence`](skills/git-change-intelligence/SKILL.md) — structured read-only Git status, history, and diff summaries without shelling out.
@@ -57,7 +57,7 @@ Commands are explicit rather than magical. Inputs, output paths, page ranges, an
 - [`launch-audit`](skills/launch-audit/SKILL.md) — a practical pre-launch and pre-commit review for fast-moving projects.
 - [`frontend-ui`](skills/frontend-ui/SKILL.md) — guidance for making interfaces feel intentional rather than generic.
 
-Every tool skill folder holds everything it needs: a `SKILL.md`, its implementation under `scripts/`, its own `package.json`, and tests under `test/`. Guidance skills ship as a `SKILL.md` and a `package.json`.
+Every tool skill folder holds its `SKILL.md`, `package.json`, implementation under `scripts/`, and tests under `test/`. Small tools keep the CLI in `scripts/index.js`; larger tools split implementation helpers into `scripts/lib/`. Guidance skills ship as a `SKILL.md` and a `package.json`, with no executable script or test folder.
 
 ## Quick start
 
@@ -93,8 +93,10 @@ Each executable skill owns its implementation, documentation, and tests:
 skills/<skill-name>/
 ├── SKILL.md
 ├── package.json
-├── scripts/
-└── test/
+├── scripts/           # tool skills only
+│   ├── index.js
+│   └── lib/            # optional implementation modules
+└── test/               # tool skills only
 ```
 
 Run everything from the repository root:
